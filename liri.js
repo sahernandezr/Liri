@@ -6,7 +6,6 @@ var axios = require("axios");
 var moment = require("moment");
 
 var action = process.argv[2];
-console.log(action);
 
 switch (action) {
     case "concert-this":
@@ -27,6 +26,7 @@ switch (action) {
 }
 
 function concert() {
+    
     var artist = process.argv.slice(3).join('');
     var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     axios.get(queryURL).then(
@@ -55,6 +55,7 @@ function concert() {
 }
 
 function song() {
+   
     if (process.argv.length === 3) {
         var querysongURL = "https://api.spotify.com/v1/search?query=The+Sign+ace+of+base&type=track&offset=0&limit=1";
     }
@@ -74,7 +75,29 @@ function song() {
 }
 
 function movie() {
-    console.log("Great movie!");
+    
+    if (process.argv.length === 3) {
+        var querymovieURL = "https://www.omdbapi.com/?t=mr+nobody&y=&plot=short&apikey=trilogy";
+        //console.log(querymovieURL);
+    }
+    else {
+        var movie = process.argv.slice(3).join('+');
+        var querymovieURL = "https://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
+        //console.log(querymovieURL);
+    }
+
+    axios.get(querymovieURL).then(
+        function (res) {
+            //console.log(res);
+
+            if (res.data.Ratings.length>1) {
+            console.log("\nTitle: "+res.data.Title+"\nYear: "+res.data.Year+"\nIMDB Rating: "+res.data.imdbRating+"/10\nRotten Tomatoes Rating: "+res.data.Ratings[1].Value+"\nCountry: "+res.data.Country+"\nLanguage: "+res.data.Language+"\nPlot: "+res.data.Plot+"\nActors: "+res.data.Actors+"\n------\n");
+        }
+            else {
+                console.log("\nTitle: "+res.data.Title+"\nYear: "+res.data.Year+"\nIMDB Rating: "+res.data.imdbRating+"\nRotten Tomatoes Rating: "+"Not available"+"\nCountry: "+res.data.Country+"\nLanguage: "+res.data.Language+"\nPlot: "+res.data.Plot+"\nActors: "+res.data.Actors+"\n------\n");
+            }
+        }
+    )
 };
 
 function dowhatisay() {
