@@ -78,12 +78,12 @@ function movie() {
 
     if (process.argv.length === 3) {
         var queryURL = "https://www.omdbapi.com/?t=mr+nobody&y=&plot=short&apikey=trilogy";
-        
+
     }
     else {
         var searchTerm = process.argv.slice(3).join('+');
         var queryURL = "https://www.omdbapi.com/?t=" + searchTerm + "&y=&plot=short&apikey=trilogy";
-        
+
     }
 
     axios.get(queryURL).then(
@@ -125,17 +125,18 @@ function dowhatisay() {
                 });
         }
 
-        if (action==="concert-this") {
+        else if (action === "concert-this") {
             searchTerm = dataArray[1].split(' ').join('');
             var queryURL = "https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=codingbootcamp";
-            console.log("\nArtist: "+dataArray[1]+"\n");
+            console.log("\nArtist: " + dataArray[1] + "\n");
+            
             axios.get(queryURL).then(
                 function (response) {
                     for (var i = 0; i < response.data.length; i++) {
                         console.log("Venue: " + JSON.stringify(response.data[i].venue.name) + "\nLocation: " + response.data[i].venue.city + ", " + response.data[i].venue.country + "\nDate: " + moment(response.data[i].datetime).format('L') + "\n--------");
                     };
                 }
-        
+
             )
                 .catch(function (error) {
                     if (error.response) {
@@ -155,8 +156,41 @@ function dowhatisay() {
 
         }
 
-        if (action==="movie-this") {
+        else if (action === "movie-this") {
+            searchTerm = dataArray[1].split(' ').join('+');
+            var queryURL = "https://www.omdbapi.com/?t=" + searchTerm + "&y=&plot=short&apikey=trilogy";
 
+            axios.get(queryURL).then(
+                function (res) {
+                    
+                    if (res.data.Ratings.length > 1) {
+                        console.log("\nTitle: " + res.data.Title + "\nYear: " + res.data.Year + "\nIMDB Rating: " + res.data.imdbRating + "/10\nRotten Tomatoes Rating: " + res.data.Ratings[1].Value + "\nCountry: " + res.data.Country + "\nLanguage: " + res.data.Language + "\nPlot: " + res.data.Plot + "\nActors: " + res.data.Actors + "\n------\n");
+                    }
+                    else {
+                        console.log("\nTitle: " + res.data.Title + "\nYear: " + res.data.Year + "\nIMDB Rating: " + res.data.imdbRating + "\nRotten Tomatoes Rating: " + "Not available" + "\nCountry: " + res.data.Country + "\nLanguage: " + res.data.Language + "\nPlot: " + res.data.Plot + "\nActors: " + res.data.Actors + "\n------\n");
+                    }
+                }
+            )
+            .catch(function (error) {
+                if (error.response) {
+                    console.log("---------------Data---------------");
+                    console.log(error.response.data);
+                    console.log("---------------Status---------------");
+                    console.log(error.response.status);
+                    console.log("---------------Status---------------");
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log("Error", error.message);
+                }
+                console.log(error.config);
+            });
+
+        }
+
+        else {
+            console.log("Please add a valid action to your random.txt: 'concert-this', 'spotify-this-song', 'movie-this' or 'do-what-it-says'");
         }
     })
 
