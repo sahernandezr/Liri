@@ -26,6 +26,18 @@ switch (action) {
         break;
 }
 
+function log () {
+    fs.appendFile("log.txt", text, function(err) {
+
+        if (err) {
+          console.log(err);
+        }
+        else {
+          console.log(text);
+        }
+    })
+}
+
 function concert() {
 
     var searchTerm = process.argv.slice(3).join('');
@@ -33,8 +45,19 @@ function concert() {
     axios.get(queryURL).then(
         function (response) {
             for (var i = 0; i < response.data.length; i++) {
-                console.log("Venue: " + JSON.stringify(response.data[i].venue.name) + "\nLocation: " + response.data[i].venue.city + ", " + response.data[i].venue.country + "\nDate: " + moment(response.data[i].datetime).format('L') + "\n--------");
-            };
+                var text = "\nVenue: " + JSON.stringify(response.data[i].venue.name) + "\nLocation: " + response.data[i].venue.city + ", " + response.data[i].venue.country + "\nDate: " + moment(response.data[i].datetime).format('L') + "\n--------";
+                
+                fs.appendFile("log.txt", text, function(err) {
+
+                    if (err) {
+                      console.log(err);
+                    }
+                    else {
+                      console.log(text);
+                    }
+                })
+                  
+            }
         }
 
     )
@@ -53,6 +76,8 @@ function concert() {
             }
             console.log(error.config);
         });
+
+        
 }
 
 function song() {
@@ -67,11 +92,25 @@ function song() {
     spotify
         .request(queryURL)
         .then(function (response) {
-            console.log("\nArtist: " + response.tracks.items[0].album.artists[0].name + "\nSong's name: " + response.tracks.items[0].name + "\nSpotify's preview link: " + response.tracks.items[0].external_urls.spotify + "\nAlbum's name:  " + response.tracks.items[0].album.name + "\n------\n");
+            var text = "\nArtist: " + response.tracks.items[0].album.artists[0].name + "\nSong's name: " + response.tracks.items[0].name + "\nSpotify's preview link: " + response.tracks.items[0].external_urls.spotify + "\nAlbum's name:  " + response.tracks.items[0].album.name + "\n------\n";
+            console.log(text);
+
+            fs.appendFile("log.txt", text, function(err) {
+
+                if (err) {
+                  console.log(err);
+                }
+                else {
+                  console.log(text);
+                }
+            });
         })
         .catch(function (err) {
             console.error('Error occurred: ' + err);
         });
+        
+        
+    
 }
 
 function movie() {
@@ -88,14 +127,20 @@ function movie() {
 
     axios.get(queryURL).then(
         function (res) {
-            //console.log(res);
-
             if (res.data.Ratings.length > 1) {
-                console.log("\nTitle: " + res.data.Title + "\nYear: " + res.data.Year + "\nIMDB Rating: " + res.data.imdbRating + "/10\nRotten Tomatoes Rating: " + res.data.Ratings[1].Value + "\nCountry: " + res.data.Country + "\nLanguage: " + res.data.Language + "\nPlot: " + res.data.Plot + "\nActors: " + res.data.Actors + "\n------\n");
+                var text = "\nTitle: " + res.data.Title + "\nYear: " + res.data.Year + "\nIMDB Rating: " + res.data.imdbRating + "/10\nRotten Tomatoes Rating: " + res.data.Ratings[1].Value + "\nCountry: " + res.data.Country + "\nLanguage: " + res.data.Language + "\nPlot: " + res.data.Plot + "\nActors: " + res.data.Actors + "\n------\n";
+                
+                console.log(text);
             }
             else {
-                console.log("\nTitle: " + res.data.Title + "\nYear: " + res.data.Year + "\nIMDB Rating: " + res.data.imdbRating + "\nRotten Tomatoes Rating: " + "Not available" + "\nCountry: " + res.data.Country + "\nLanguage: " + res.data.Language + "\nPlot: " + res.data.Plot + "\nActors: " + res.data.Actors + "\n------\n");
+                text = "\nTitle: " + res.data.Title + "\nYear: " + res.data.Year + "\nIMDB Rating: " + res.data.imdbRating + "\nRotten Tomatoes Rating: " + "Not available" + "\nCountry: " + res.data.Country + "\nLanguage: " + res.data.Language + "\nPlot: " + res.data.Plot + "\nActors: " + res.data.Actors + "\n------\n";
+                
+                console.log(text);
+
+                
             }
+
+            
         }
     )
 };
